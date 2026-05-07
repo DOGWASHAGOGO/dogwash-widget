@@ -359,11 +359,9 @@ function rSlots(dw) {
   document.getElementById('sh').textContent = (lang==='en'?'Times for ':'Zeiten für ') + ds2;
   var slots = [];
   var closeMin = h.c * 60;
-  for (var hr = h.o; hr <= h.c; hr++) {
-    var t00 = hr + ':00';
-    var t30 = hr + ':30';
-    if (hr * 60 <= closeMin) slots.push(t00);
-    if (hr * 60 + 30 < closeMin) slots.push(t30);
+  for (var hr = h.o; hr < h.c; hr++) {
+    slots.push(hr + ':00');
+    slots.push(hr + ':30');
   }
   var key = S.yr+'-'+S.mo+'-'+S.day;
   if (!window.FS) window.FS = {};
