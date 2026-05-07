@@ -277,7 +277,7 @@ var MO = {
   en: ['January','February','March','April','May','June','July','August','September','October','November','December'],
   de: ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
 };
-var OPEN = {1:{o:11,c:18},3:{o:11,c:18},4:{o:11,c:18},5:{o:10,c:17},6:{o:10,c:17}};
+var OPEN = {1:{o:11,c:19},3:{o:11,c:19},4:{o:11,c:19},5:{o:10,c:18},6:{o:10,c:18}};
 var AN = {
   en: {cond:'Conditioner',ear:'Ear cleaner',perf:'Perfume',shed:'De-shedding treatment',lick:'Licky mat',treats:'Bag of treats'},
   de: {cond:'Conditioner',ear:'Ohrenreiniger',perf:'Parfüm',shed:'Enthaaren-Behandlung',lick:'Leckermatte',treats:'Tüte Leckerlis'}
@@ -362,7 +362,7 @@ function rSlots(dw) {
   if (slots.length) slots.pop();
   var key = S.yr+'-'+S.mo+'-'+S.day;
   if (!window.FS) window.FS = {};
-  if (!window.FS[key]) { window.FS[key]={}; slots.forEach(function(t){if(Math.random()<0.15)window.FS[key][t]=true;}); }
+  if (!window.FS[key]) { window.FS[key]={}; }  // availability comes from backend
   slots.forEach(function(t, i) {
     var full = window.FS[key][t];
     var sel = S.slot===t; var sel2 = false;
