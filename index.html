@@ -358,8 +358,12 @@ function rSlots(dw) {
   var ds2 = new Date(S.yr, S.mo, S.day).toLocaleDateString(locale,{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('sh').textContent = (lang==='en'?'Times for ':'Zeiten für ') + ds2;
   var slots = [];
-  for (var hr = h.o; hr < h.c; hr++) { slots.push(hr+':00'); if(hr+1<h.c) slots.push(hr+':30'); }
-  if (slots.length) slots.pop();
+  for (var hr = h.o; hr < h.c; hr++) {
+    slots.push(hr+':00');
+    slots.push(hr+':30');
+  }
+  // Only show slots that can be valid start times (need at least 2 consecutive slots)
+  slots = slots.filter(function(t, i) { return i + 2 <= slots.length; });
   var key = S.yr+'-'+S.mo+'-'+S.day;
   if (!window.FS) window.FS = {};
   if (!window.FS[key]) { window.FS[key]={}; }  // availability comes from backend
