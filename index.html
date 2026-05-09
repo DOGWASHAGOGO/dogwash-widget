@@ -462,6 +462,7 @@ async function finish() {
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
         locationId: 'neukolln',
+        lang: lang,
         date: S.yr+'-'+String(S.mo+1).padStart(2,'0')+'-'+String(S.day).padStart(2,'0'),
         startTime: S.slot,
         extraTime: S.extra,
