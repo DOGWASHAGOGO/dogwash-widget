@@ -485,7 +485,14 @@ async function finish() {
   }
 }
 
-// Init
+// Init — detect language from URL parameter
+var urlParams = new URLSearchParams(window.location.search);
+var urlLang = urlParams.get('lang');
+if (urlLang === 'de' || urlLang === 'en') {
+  setLang(urlLang);
+  // Hide the toggle when language is set via URL (embedded in Readymag)
+  document.querySelector('.lang-row').style.display = 'none';
+}
 document.getElementById('mail-chk').style.opacity = '0';
 document.querySelectorAll('.ack').forEach(function(c){c.style.opacity='0';});
 rCal();
