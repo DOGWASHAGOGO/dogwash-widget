@@ -476,7 +476,7 @@ async function finish() {
       })
     });
     var data = await resp.json();
-    if (data.checkoutUrl) { window.location.href = data.checkoutUrl; }
+    if (data.checkoutUrl) { window.top.location.href = data.checkoutUrl; }
     else { throw new Error(data.error || 'Something went wrong'); }
   } catch(err) {
     btn.disabled = false;
