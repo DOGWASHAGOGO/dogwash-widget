@@ -343,17 +343,55 @@ function pDay(d, dw, off, past) {
   if (off||past) return;
   S.day = d; S.slot = null; S.extra = false;
   document.getElementById('extra-tog').classList.remove('on');
-  rCal(); rSlots(dw);
+  rCal();
   document.getElementById('sw').style.display = 'block';
   document.getElementById('btn1').disabled = true;
+  document.getElementById('sg').innerHTML = '<div style="padding:16px;color:#888;font-size:13px">Loading...</div>';
+  
+  var dateStr = S.yr+'-'+String(S.mo+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+  fetch('https://dogwash-backend.onrender.com/availability/neukolln/'+dateStr)
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.closed){
+        document.getElementById('sg').innerHTML = '<div style="padding:16px;color:#e53935;font-size:13px;font-weight:600">'+(lang==='de'?'Geschlossen':'Closed')+(data.reason?' — '+data.reason:'')+'</div>';
+        document.getElementById('sh').textContent = '';
+        return;
+      }
+      rSlots(dw, data.slots);
+    })
+    .catch(function(){
+      // Fallback to local slot generation if backend unavailable
+      rSlots(dw, null);
+    });
 }
 
-function rSlots(dw) {
+function rSlots(dw, backendSlots) {
   var h = OPEN[dw] || {o:11,c:18};
   var g = document.getElementById('sg'); g.innerHTML = '';
   var locale = lang==='de' ? 'de-DE' : 'en-GB';
   var ds2 = new Date(S.yr, S.mo, S.day).toLocaleDateString(locale,{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('sh').textContent = (lang==='en'?'Times for ':'Zeiten für ') + ds2;
+  // Use backend availability if provided
+  if (backendSlots) {
+    var g = document.getElementById('sg'); g.innerHTML = '';
+    var locale = lang==='de' ? 'de-DE' : 'en-GB';
+    var ds2 = new Date(S.yr, S.mo, S.day).toLocaleDateString(locale,{weekday:'long',day:'numeric',month:'long'});
+    document.getElementById('sh').textContent = (lang==='en'?'Times for ':'Zeiten für ') + ds2;
+    var slots = backendSlots.map(function(s){return s.time;});
+    backendSlots.forEach(function(s, i) {
+      var tParts = s.time.split(':');
+      var tMin = parseInt(tParts[0])*60 + parseInt(tParts[1]);
+      var cantStart = !s.canBook;
+      var sel = S.slot===s.time; var sel2 = false;
+      if (S.slot) { var si=slots.indexOf(S.slot); if(i===si+1)sel2=true; if(S.extra&&i===si+2)sel2=true; }
+      var cl = 'st'+(cantStart?' full':'')+(sel?' sel':'')+(sel2?' sel2':'');
+      var avail = cantStart ? '' : (lang==='en'?'Free':'Frei');
+      g.innerHTML += '<div class="'+cl+'" data-time="'+s.time+'" data-idx="'+i+'" onclick="pSlot(\u0027'+s.time+'\u0027,'+i+','+cantStart+')">' +s.time+'<div class="ss">'+avail+'</div></div>';
+    });
+    uExtra(slots);
+    return;
+  }
+
   var slots = [];
   var closeMin = h.c * 60;
   for (var hr = h.o; hr < h.c; hr++) {
